@@ -1,0 +1,62 @@
+### API Testing (VS Code “REST Client” extension, or copy to Postman)
+@host = http://localhost:5000/api
+
+### 0. Health
+GET {{host}}/health
+
+### 1. Registration
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{ “name”: “Ana”, “email”: “ana@test.com”, ‘password’: “123456” }
+
+### 2. Login (copy the token from the response)
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{ “email”: “ana@test.com”, ‘password’: “123456” }
+
+### 3. Profile
+@token = PASTE_THE_TOKEN_HERE
+GET {{host}}/auth/me
+Authorization: Bearer {{token}}
+
+### 4. Create a playlist (CREATE)
+POST {{host}}/playlists
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ “name”: “My first playlist”, “description”: ‘Test’, “isPublic”: false }
+
+### 5. List my playlists (READ)
+GET {{host}}/playlists
+Authorization: Bearer {{token}}
+
+### 6. Edit playlist (UPDATE)  -> change ID
+PUT {{host}}/playlists/PLAYLIST_ID
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ “name”: “New Name” }
+
+### 7. Add a song
+POST {{host}}/playlists/PLAYLIST_ID/tracks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ “youtubeId”: “dQw4w9WgXcQ”, “title”: “Test Song”, ‘channel’: “Channel” }
+
+### 8. Delete playlist (DELETE)
+DELETE {{host}}/playlists/PLAYLIST_ID
+Authorization: Bearer {{token}}
+
+### 9. Authorization: A regular user should receive a 403 error
+GET {{host}}/users
+Authorization: Bearer {{token}}
+
+### 10. Authorization: The admin can list users (admin token)
+# GET {{host}}/users   with the token from admin@zelit.com
+
+### 11. Without a token, it should return a 401
+GET {{host}}/playlists
+
